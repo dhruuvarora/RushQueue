@@ -8,12 +8,16 @@
     "build": "tsc"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "ts-node-dev": "^2.0.0",
+    "@types/chalk": "^2.2.4",
+    "@types/express": "^5.0.5",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^24.10.1",
-    "@types/express": "^4.17.21"
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "chalk": "4",
+    "express": "^5.1.0",
+    "morgan": "^1.10.1"
   }
 }

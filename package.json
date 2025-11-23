@@ -1,0 +1,19 @@
+{
+  "name": "RushQueue",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "ts-node-dev": "^2.0.0",
+    "@types/node": "^24.10.1",
+    "@types/express": "^4.17.21"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

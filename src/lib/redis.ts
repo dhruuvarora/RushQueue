@@ -3,19 +3,18 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const redisConnect = () =>{
+export const redisConnect = () => {
+  const redis = new Redis(process.env.REDIS_URL!, {
+    maxRetriesPerRequest: 5,
+  });
 
-const redis = new Redis(process.env.REDIS_URL!, {
-  maxRetriesPerRequest: 5,
-});
+  redis.on("connect", () => {
+    console.log("Redis connected Successfully");
+  });
 
-redis.on("connect", () => {
-  console.log("Redis connected Successfully");
-});
+  redis.on("error", (err) => {
+    console.error("Redis error:", err);
+  });
 
-redis.on("error", (err) => {
-  console.error("Redis error:", err);
-});
-
-return redis;
-}
+  return redis;
+};

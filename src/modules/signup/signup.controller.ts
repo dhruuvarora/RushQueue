@@ -4,12 +4,12 @@ import  signupService from "./signup.service";
 export class SignupController {
     async signup(req: Request, res: Response): Promise<void> {
         try {
-            const {user_name, user_dob, user_mobile, user_email, user_password} = req.body;
+            const {user_name, user_dob, user_mob, user_email, user_password} = req.body;
 
             const result = await signupService.signup({
                 user_name,
                 user_dob,
-                user_mobile,
+                user_mob,
                 user_email,
                 user_password
             })
@@ -26,3 +26,5 @@ export class SignupController {
         }
     }
 }
+
+export default new SignupController();

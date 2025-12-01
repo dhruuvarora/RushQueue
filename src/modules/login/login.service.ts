@@ -1,9 +1,6 @@
-import { Request, Response } from "express";
-import { PrismaClient } from "../../generated/prisma";
-import bcrypt from "bcrypt";
+import prisma from "../../lib/prisma";
+import bcrypt from "bcryptjs";
 import { generateToken } from "../../utils/jwt.util";
-
-const Prisma = new PrismaClient();
 
 interface LoginData {
   user_email: string;

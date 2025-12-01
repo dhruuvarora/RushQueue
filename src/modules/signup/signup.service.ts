@@ -1,43 +1,49 @@
-import bcrypt from "bcrypt";
-import { PrismaClient } from "../../generated/prisma";
+import bcrypt from "bcryptjs";
+import { PrismaClient } from "@prisma/client";
 
-const Prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
 export interface SignupData {
-    user_name: string;
-    user_dob: string;
-    user_mobile: string;
-    user_email: string;
-    user_password: string;
+  user_name: string;
+  user_dob: string;
+  user_mob: string;  
+  user_email: string;
+  user_password: string;
 }
 
-export class signupService {
-    async signup(data: SignupData) {
-        const { user_name, user_dob, user_mobile, user_email, user_password } = data;
+class SignupService {
+  async signup(data: SignupData) {
+    const { user_name, user_dob, user_mob, user_email, user_password } = data;
 
-        const checkExistingUser = await Prisma.users.findUnique({
-            where: { user_email }
-        });
+    // Check existing user
+    const existingUser = await prisma.users.findUnique({
+      where: { user_email },
+    });
 
-        if(checkExistingUser){
-            throw new Error("User with this email already exists");
-        }
-
-        const hashedPassword = await bcrypt.hash(user_password, process.env.SALT_ROUNDS ? parseInt(process.env.SALT_ROUNDS) : 10);
-
-        // create a new user
-        const newUser = await Prisma.users.create({
-            data: {
-                user_name,
-                user_dob: new Date(user_dob),
-                user_mob: user_mobile,
-                user_email,
-                user_password: hashedPassword
-            }
-        })
-
-        return newUser;
+    if (existingUser) {
+      throw new Error("User with this email already exists");
     }
+
+    // Hash password
+    const saltRounds = process.env.SALT_ROUNDS
+      ? parseInt(process.env.SALT_ROUNDS)
+      : 10;
+
+    const hashedPassword = await bcrypt.hash(user_password, saltRounds);
+
+    // Create new user
+    const newUser = await prisma.users.create({
+      data: {
+        user_name,
+        user_dob: new Date(user_dob),
+        user_mob,                     
+        user_email,
+        user_password: hashedPassword,
+      },
+    });
+
+    return newUser;
+  }
 }
 
-export default new signupService();
+export default new SignupService();

@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
   res.send("RushQueue Server is running");
 });
 
-app.use("/api", modulesRouter);
+app.use("/api/v1", modulesRouter);
 
 const redis = redisConnect();
 httpLogger.bind("Redis client initialized");

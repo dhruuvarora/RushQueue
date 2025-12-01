@@ -1,4 +1,3 @@
-import prisma from "../../lib/prisma";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../../utils/jwt.util";
 

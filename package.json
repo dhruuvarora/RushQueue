@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "db:generate": "kysely-codegen --dialect mysql --numeric-parser number --log-level debug --env-file .env --out-file ./src/db/db.d.ts"
   },
   "devDependencies": {
     "@types/chalk": "^2.2.4",
@@ -26,6 +27,8 @@
     "express": "^5.1.0",
     "ioredis": "^5.8.2",
     "jsonwebtoken": "^9.0.2",
+    "kysely": "^0.28.8",
+    "kysely-codegen": "^0.19.0",
     "morgan": "^1.10.1",
     "mysql2": "^3.15.3"
   }

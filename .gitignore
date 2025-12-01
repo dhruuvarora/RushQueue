@@ -143,3 +143,6 @@ vite.config.ts.timestamp-*
 /src/generated/prisma
 
 /src/generated/prisma
+
+# Kysely codegen files
+src/db/db.d.ts

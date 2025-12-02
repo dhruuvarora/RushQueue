@@ -40,6 +40,28 @@ export class EventController {
             });
         }
     }
+    async getEventSeats (req: Request, res: Response){
+        try {
+            const eventId = req.params.id;
+            const seats = await EventService.getEventSeats(Number(eventId));
+            if(!seats){
+                return res.status(404).json({
+                    success: false,
+                    message: "Seats not found for this event",
+                });
+            }
+            return res.status(200).json({
+                success: true,
+                data: seats,
+            });
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: "Internal Server Error",
+                error,
+            });
+        }
+    }
 }
 
 export default new EventController();

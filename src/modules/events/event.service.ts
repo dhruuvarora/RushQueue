@@ -40,6 +40,23 @@ export class EventService {
             .executeTakeFirst();
         return event || null;
     }
+    async getEventSeats(eventId: number) {
+        const seats = await db
+            .selectFrom("Event_Seats")
+            .innerJoin("Seats",
+                "Event_Seats.seat_id",
+                "Seats.seat_id"
+            )
+            .select([
+                "Event_Seats.event_seat_id",
+                "Seats.seat_number",
+                "Seats.seat_row",
+                "Event_Seats.status",
+            ])
+            .where("Event_Seats.event_id", "=", eventId)
+            .execute();
+        return seats;
+    }
 }
 
 export default new EventService();

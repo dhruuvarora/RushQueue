@@ -1,5 +1,3 @@
-// src/workers/seatSelection.worker.ts
-
 import { Worker } from "bullmq";
 import { redisConnect } from "../lib/redis";
 import { db } from "../db";
@@ -10,7 +8,6 @@ const LOCK_TTL_SECONDS = 60; // lock TTL (seconds)
 const SEAT_LOCK_KEY = (eventId: number, eventSeatId: number) =>
   `seat-lock:${eventId}:${eventSeatId}`;
 
-const SEAT_CACHE_KEY = (eventId: number) => `event-seats:${eventId}`;
 const SEAT_CHANNEL = "SEAT_UPDATED";
 
 export const seatSelectionWorker = new Worker(

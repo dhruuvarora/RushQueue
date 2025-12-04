@@ -1288,7 +1288,7 @@ proxy-addr@^2.0.7:
     forwarded "0.2.0"
     ipaddr.js "1.9.1"
 
-qs@^6.14.0:
+qs@^6.11.0, qs@^6.14.0:
   version "6.14.0"
   resolved "https://registry.npmjs.org/qs/-/qs-6.14.0.tgz"
   integrity sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==
@@ -1516,6 +1516,13 @@ strip-json-comments@^2.0.0:
   version "2.0.1"
   resolved "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-2.0.1.tgz"
   integrity sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ==
+
+stripe@^20.0.0:
+  version "20.0.0"
+  resolved "https://registry.yarnpkg.com/stripe/-/stripe-20.0.0.tgz#0c7421425def7d00ca9bc73d0d6c80a5310140c3"
+  integrity sha512-EaZeWpbJOCcDytdjKSwdrL5BxzbDGNueiCfHjHXlPdBQvLqoxl6AAivC35SPzTmVXJb5duXQlXFGS45H0+e6Gg==
+  dependencies:
+    qs "^6.11.0"
 
 supports-color@^5.3.0:
   version "5.5.0"

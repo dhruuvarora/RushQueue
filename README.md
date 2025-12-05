@@ -1,3 +1,4 @@
+<img width="1024" height="1024" alt="RushQueue" src="https://github.com/user-attachments/assets/6873eec6-cf9b-4eb6-9291-95c351a0a1d1" />
 # 🚀 RushQueue – High-Concurrency Concert Ticket Booking System
 
 **RushQueue** is a production-grade backend system designed for handling **high-concurrency** concert ticket booking. It utilizes a robust architecture featuring distributed locking and queuing to ensure **atomic seat selection** and **prevent double-booking**, even under immense load.

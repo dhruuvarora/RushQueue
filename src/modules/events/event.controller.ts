@@ -65,7 +65,7 @@ export class EventController {
   }
 
   async selectSeats(req: Request, res: Response) {
-    const eventId = Number(req.params.id);
+    const eventId = Number(req.params.eventId);
     const { event_seat_id } = req.body;
     const userId = req.user?.user_id;
 

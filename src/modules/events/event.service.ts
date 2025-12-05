@@ -36,6 +36,7 @@ export class EventService {
       .executeTakeFirst();
     return event || null;
   }
+  
   async getEventSeats(eventId: number) {
     const seats = await db
       .selectFrom("Event_Seats")

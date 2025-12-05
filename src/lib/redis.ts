@@ -5,7 +5,8 @@ dotenv.config();
 
 export const redisConnect = () => {
   const redis = new Redis(process.env.REDIS_URL!, {
-    maxRetriesPerRequest: 5,
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false,
   });
 
   redis.on("connect", () => {

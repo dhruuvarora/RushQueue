@@ -10,6 +10,6 @@ const router = Router();
 router.use("/auth", signupRoutes);
 router.use("/auth", loginRoutes);
 router.use("/events", verifyToken, eventRoutes);
-router.use("/payments", verifyToken, paymentRoutes)
+router.use("/payments", paymentRoutes);
 
 export default router;

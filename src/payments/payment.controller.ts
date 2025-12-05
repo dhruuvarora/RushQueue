@@ -8,21 +8,14 @@ export class PaymentController {
   async initiatePayment(req: Request, res: Response) {
     try {
       const body = req.body as any;
-      const user = (req as any).user;
 
       const eventSeatId = Number(body.eventSeatId);
-      const userId = user?.user_id;
 
       if (!eventSeatId) {
-        return res
-          .status(400)
-          .json({ success: false, message: "eventSeatId is required" });
-      }
-
-      if (!userId) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Unauthorized" });
+        return res.status(400).json({
+          success: false,
+          message: "eventSeatId is required",
+        });
       }
 
       // 1. Check seat exists
@@ -33,20 +26,26 @@ export class PaymentController {
         .executeTakeFirst();
 
       if (!seat) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Seat not found" });
-      }
-
-      // 2. Check seat is locked by same user
-      if (seat.locked_user_id !== userId) {
-        return res.status(400).json({
+        return res.status(404).json({
           success: false,
-          message: "Seat not locked by this user",
+          message: "Seat not found",
         });
       }
 
-      // 3. Check lock expiry
+      // DEBUG
+      console.log("DEBUG SEAT LOCK:", {
+        seat_locked_user_id: seat.locked_user_id,
+        seatStatus: seat.status,
+        seatLockExpire: seat.lock_expire,
+      });
+
+      if (!seat.locked_user_id) {
+        return res.status(400).json({
+          success: false,
+          message: "Seat is not locked by any user",
+        });
+      }
+
       if (new Date(seat.lock_expire!) < new Date()) {
         return res.status(400).json({
           success: false,
@@ -70,9 +69,18 @@ export class PaymentController {
             quantity: 1,
           },
         ],
-        success_url: `${process.env.BASE_URL}/payments/success?session_id={CHECKOUT_SESSION_ID}&eventSeatId=${eventSeatId}`,
-        cancel_url: `${process.env.BASE_URL}/payments/cancel?eventSeatId=${eventSeatId}`,
+        success_url: `${process.env.BASE_URL}/api/v1/payments/success?session_id={CHECKOUT_SESSION_ID}&eventSeatId=${eventSeatId}`,
+        cancel_url: `${process.env.BASE_URL}/api/v1/payments/cancel?eventSeatId=${eventSeatId}`,
       });
+
+      console.log(
+        "SUCCESS URL =>",
+        `${process.env.BASE_URL}/api/v1/payments/success`
+      );
+      console.log(
+        "CANCEL URL =>",
+        `${process.env.BASE_URL}/api/v1/payments/cancel`
+      );
 
       return res.status(200).json({
         success: true,
@@ -90,10 +98,19 @@ export class PaymentController {
 
   async paymentSuccess(req: Request, res: Response) {
     try {
-      const { session_id, eventSeatId } = req.query;
-      const session = await stripe.checkout.sessions.retrieve(
-        String(session_id)
-      );
+      const session_id = req.query.session_id as string;
+      const eventSeatId = Number(req.query.eventSeatId);
+
+      console.log("SESSION ID RECEIVED:", session_id);
+
+      if (!session_id) {
+        return res.status(400).json({
+          success: false,
+          message: "Missing Stripe session_id",
+        });
+      }
+
+      const session = await stripe.checkout.sessions.retrieve(session_id);
 
       if (session.payment_status !== "paid") {
         return res.json({ success: false, message: "Payment not verified" });
@@ -106,17 +123,17 @@ export class PaymentController {
           locked_user_id: null,
           lock_expire: null,
         })
-        .where("event_seat_id", "=", Number(eventSeatId))
+        .where("event_seat_id", "=", eventSeatId)
         .execute();
 
       await redis.del(`seat-lock:${eventSeatId}`);
 
-      return res.status(200).json({
+      return res.json({
         success: true,
         message: "Payment successful and seat booked",
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Internal Server Error",
         error,

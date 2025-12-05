@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
-    "db:generate": "kysely-codegen --dialect mysql --numeric-parser number --log-level debug --env-file .env --out-file ./src/db/db.d.ts"
+    "db:generate": "kysely-codegen --dialect mysql --numeric-parser number --log-level debug --env-file .env --out-file ./src/db/db.d.ts",
+    "worker": "ts-node-dev --respawn --transpile-only src/workers/seatSelection.worker.ts"
   },
   "devDependencies": {
     "@types/chalk": "^2.2.4",

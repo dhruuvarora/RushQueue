@@ -110,12 +110,41 @@ export class PaymentController {
         });
       }
 
+      // 1. Retrieve Stripe Session
       const session = await stripe.checkout.sessions.retrieve(session_id);
 
       if (session.payment_status !== "paid") {
         return res.json({ success: false, message: "Payment not verified" });
       }
 
+      // 2. Fetch the seat row
+      const seat = await db
+        .selectFrom("Event_Seats")
+        .selectAll()
+        .where("event_seat_id", "=", eventSeatId)
+        .executeTakeFirst();
+
+      if (!seat) {
+        return res.json({ success: false, message: "Seat not found" });
+      }
+
+      const userId = seat.locked_user_id; // user who locked the seat
+
+      // 3. CREATE Payment Row
+      const paymentInsert = await db
+        .insertInto("Payments")
+        .values({
+          payment_amount: "500",
+          payment_status: "success",
+          transaction_id: session.id,
+          user_id: userId!,
+          payment_time: new Date(),
+        })
+        .executeTakeFirst();
+
+      const paymentId = Number(paymentInsert.insertId);
+
+      // 4. UPDATE Seat Status to BOOKED
       await db
         .updateTable("Event_Seats")
         .set({
@@ -126,11 +155,29 @@ export class PaymentController {
         .where("event_seat_id", "=", eventSeatId)
         .execute();
 
-      await redis.del(`seat-lock:${eventSeatId}`);
+      // 5. INSERT Booking Entry
+      await db
+        .insertInto("Bookings")
+        .values({
+          event_id: seat.event_id,
+          event_seat_id: eventSeatId,
+          payment_id: paymentId,
+          user_id: userId!,
+        })
+        .executeTakeFirst();
+
+      // 6. Clear Redis Lock
+      await redis.del(`seat-lock:${seat.event_id}:${eventSeatId}`);
 
       return res.json({
         success: true,
-        message: "Payment successful and seat booked",
+        message: "Payment successful, seat booked & booking created!",
+        booking: {
+          event_id: seat.event_id,
+          event_seat_id: eventSeatId,
+          payment_id: paymentId,
+          user_id: userId,
+        },
       });
     } catch (error) {
       return res.status(500).json({
